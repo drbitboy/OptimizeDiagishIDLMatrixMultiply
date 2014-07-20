@@ -1,5 +1,5 @@
 
-Optimize a matix multiply in IDL for a diagonally symmetric matrix.
+Optimize a matrix multiply in IDL for a special matrix.
 
 Support files for a question on stackoverflow.com.
 
