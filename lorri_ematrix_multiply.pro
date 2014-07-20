@@ -98,6 +98,21 @@ common two_two_cmn, onerow1k, onerowQk $
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Backup if READFITS.PRO is not in path
+function readfits_backup
+  print,'### USING READFITS_BACKUP'
+  delta = 0.044d0
+  sz = 1024L
+  rtn = make_array(sz,sz,value=1d0)
+  iw1Kx1K = lindgen(sz,sz)
+  cols = iw1Kx1K MOD sz
+  rows = iw1Kx1K / sz
+  rtn[where( cols gt rows)] += delta
+  rtn[where( cols lt rows)] -= delta
+  return,rtn
+end
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Test code
 ;;;
 ;;; Usage:
@@ -109,7 +124,16 @@ or n_elements(nTest) eq 1L then begin
   !quiet=1b
 
   if n_elements(NxN) eq 0L then NxN = randomu(iseed,1024,1024,/double)
-  EMatrix = double(readfits('dsmear_ematrix_1024.fit'))
+
+  catcherr = 0L
+  catch,catcherr
+  if catcherr eq 0L then begin
+    EMatrix = double(readfits('dsmear_ematrix_1024.fit'))
+  endif else begin
+    EMatrix = readfits_backup()
+  endelse
+  catch,/cancel
+
   dims = size(NxN,/dim)
   nrows = dims[1]
   EMatrix = EMatrix[0:nrows-1,0:nrows-1]
