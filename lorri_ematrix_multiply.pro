@@ -23,6 +23,8 @@
 ;;;
 ;;; 2014-07-19 BTCarcich Initial version
 ;;; 2014-09-16 BTCarcich Better version, ~10x speedup wrt #
+;;;                      - With help from Diego Mazzaro,
+;;;                        http://diego.mazzaro.net/
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Details:
 ;;;
@@ -108,7 +110,7 @@ FUNCTION LORRI_EMATRIX_MULTIPLY, NxN, EMatrix, delta=deltaArg
   ;;; Calculate arra of cumulative sums down columns
   SUMXY = TOTAL(NxN,2,/CUMULATIVE)
   ;;; Duplicate column totals (last row of SUMXY) into complete matrix
-  TOT   = SUMXY[*,NROWS-1] # REPLICATE(1,1,NROWS)
+  TOT   = SUMXY[*,NROWS-1] # REPLICATE(1,1L,NROWS)
   ;;; Return array equivalent to (NxN # EMatrix)
   return, TOT + (DELTA * (TOT + NxN - (2 * SUMXY)))
   ;;; N.B. Multiplying by integer 2 appears to be faster than by 2D0
